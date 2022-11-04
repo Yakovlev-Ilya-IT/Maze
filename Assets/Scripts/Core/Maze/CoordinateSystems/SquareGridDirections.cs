@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class SquareGridDirections
 {
-    public readonly static Dictionary<CellDirections, Vector2Int> Directions = new Dictionary<CellDirections, Vector2Int>()
+    public readonly static Dictionary<CellDirections, CartesianGridCoordinates> Directions = new Dictionary<CellDirections, CartesianGridCoordinates>()
     {
-        {CellDirections.Up, Vector2Int.up},
-        {CellDirections.Right, Vector2Int.right},
-        {CellDirections.Down, Vector2Int.down},
-        {CellDirections.Left, Vector2Int.left}
+        {CellDirections.Up, new CartesianGridCoordinates(0, 1)},
+        {CellDirections.Right, new CartesianGridCoordinates(1, 0)},
+        {CellDirections.Down, new CartesianGridCoordinates(0, -1)},
+        {CellDirections.Left, new CartesianGridCoordinates(-1, 0)}
     };
 }

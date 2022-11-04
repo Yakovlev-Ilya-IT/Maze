@@ -3,11 +3,11 @@ using UnityEngine;
 
 public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 {
-    protected Dictionary<uint, CellData> _visitedCells = new Dictionary<uint, CellData>();
+    private Dictionary<uint, MazeCellData> _visitedCells = new Dictionary<uint, MazeCellData>();
 
-    public Grid Generate(int width, int height)
+    public MazeDataGrid Generate(int width, int height)
     {
-        Grid mazeGrid = BuildInitialGrid(width, height);
+        MazeDataGrid mazeGrid = BuildInitialGrid(width, height);
 
         GenerateMaze(mazeGrid);
 
@@ -15,25 +15,26 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 
     }
 
-    protected abstract Grid BuildInitialGrid(int width, int height);
+    protected abstract MazeDataGrid BuildInitialGrid(int width, int height);
 
-    private void GenerateMaze(Grid mazeGrid)
+    private void GenerateMaze(MazeDataGrid mazeGrid)
     {
-        CellData currentCell = mazeGrid.GetRandomCell();
+        MazeCellData currentCell = mazeGrid.GetRandomCell();
 
         _visitedCells.Add(currentCell.Id, currentCell);
 
-        Stack<CellData> mazeCells = new Stack<CellData>();
+        Stack<MazeCellData> mazeCells = new Stack<MazeCellData>();
 
         do
         {
-            List<CellData> unvisitedNeighbours = GetUnvisitedNeighbours(currentCell, mazeGrid);
+            List<MazeCellData> unvisitedNeighbours = GetUnvisitedNeighbours(currentCell, mazeGrid, _visitedCells);
 
             if (unvisitedNeighbours.Count > 0)
             {
-                CellData chosenCell = unvisitedNeighbours[Random.Range(0, unvisitedNeighbours.Count)];
+                MazeCellData chosenCell = unvisitedNeighbours[Random.Range(0, unvisitedNeighbours.Count)];
 
-                RemoveWall(currentCell, chosenCell);
+                CellDirections connectionDirection = GetConnectionDirection(currentCell, chosenCell);
+                RemoveWall(currentCell, chosenCell, connectionDirection);
 
                 _visitedCells.Add(chosenCell.Id, chosenCell);
                 mazeCells.Push(chosenCell);
@@ -46,11 +47,13 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
         } while (mazeCells.Count > 0);
     }
 
-    protected abstract void RemoveWall(CellData currentCell, CellData chosenCell);
+    protected abstract CellDirections GetConnectionDirection(MazeCellData currentCell, MazeCellData neighbourCell);
 
-    protected abstract List<CellData> GetUnvisitedNeighbours(CellData currentCell, Grid mazeGrid);
+    protected abstract void RemoveWall(MazeCellData currentCell, MazeCellData chosenCell, CellDirections connectionDirection);
 
-    protected bool TryGetNeighbour(IGridCoordinates neighbourCoordinates, Grid grid, out CellData neighbour)
+    protected abstract List<MazeCellData> GetUnvisitedNeighbours(MazeCellData currentCell, MazeDataGrid mazeGrid, Dictionary<uint, MazeCellData> visitedCells);
+
+    protected bool TryGetNeighbour(IGridCoordinates neighbourCoordinates, MazeDataGrid grid, out MazeCellData neighbour)
     {
         if (grid.TryGetCell(neighbourCoordinates, out neighbour))
             return true;

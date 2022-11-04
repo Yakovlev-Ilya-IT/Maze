@@ -1,23 +1,23 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class DepthFirstSearchMazeSquareGridGenerator : DepthFirstSearchMazeGridGenerator
 {
-    protected override Grid BuildInitialGrid(int width, int height) => new SquareGrid(width, height);
+    protected override MazeDataGrid BuildInitialGrid(int width, int height) => new SquareMazeDataGrid(width, height);
 
-    protected override List<CellData> GetUnvisitedNeighbours(CellData currentCell, Grid mazeGrid)
+    protected override List<MazeCellData> GetUnvisitedNeighbours(MazeCellData currentCell, MazeDataGrid mazeGrid, Dictionary<uint, MazeCellData> visitedCells)
     {
-        List<CellData> unvisitedNeighbours = new List<CellData>();
+        List<MazeCellData> unvisitedNeighbours = new List<MazeCellData>();
 
         CartesianGridCoordinates cartesianCellCoordinates = currentCell.Coordinates.ConvertToGridCartesian();
 
-        foreach (KeyValuePair<CellDirections, Vector2Int> direction in SquareGridDirections.Directions)
+        foreach (KeyValuePair<CellDirections, CartesianGridCoordinates> direction in SquareGridDirections.Directions)
         {
-            IGridCoordinates neighbourCoordinates = new CartesianGridCoordinates(cartesianCellCoordinates.X + direction.Value.x, cartesianCellCoordinates.Y + direction.Value.y);
+            IGridCoordinates neighbourCoordinates = cartesianCellCoordinates + direction.Value;
 
-            if (TryGetNeighbour(neighbourCoordinates, mazeGrid, out CellData neighbour))
+            if (TryGetNeighbour(neighbourCoordinates, mazeGrid, out MazeCellData neighbour))
             {
-                if (!_visitedCells.ContainsKey(neighbour.Id))
+                if (!visitedCells.ContainsKey(neighbour.Id))
                     unvisitedNeighbours.Add(neighbour);
             }
         }
@@ -25,10 +25,8 @@ public class DepthFirstSearchMazeSquareGridGenerator : DepthFirstSearchMazeGridG
         return unvisitedNeighbours;
     }
 
-    protected override void RemoveWall(CellData currentCell, CellData chosenCell)
+    protected override void RemoveWall(MazeCellData currentCell, MazeCellData chosenCell, CellDirections connectionDirection)
     {
-        CellDirections connectionDirection = GetConnectionDirection(currentCell, chosenCell);
-
         switch (connectionDirection)
         {
             case CellDirections.Up:
@@ -48,25 +46,22 @@ public class DepthFirstSearchMazeSquareGridGenerator : DepthFirstSearchMazeGridG
                 chosenCell.Walls[CellDirections.Right] = false;
                 break;
             default:
-                Debug.LogError("there was no cartesian direction");
-                break;
+                throw new ArgumentException(message: $"Unexpected enum value: {connectionDirection}", paramName: nameof(connectionDirection));
         }
     }
 
-    private CellDirections GetConnectionDirection(CellData currentCell, CellData neighbourCell)
+    protected override CellDirections GetConnectionDirection(MazeCellData currentCell, MazeCellData neighbourCell)
     {
         CartesianGridCoordinates cartesianCellCoordinates = currentCell.Coordinates.ConvertToGridCartesian();
 
-        foreach (KeyValuePair<CellDirections, Vector2Int> direction in SquareGridDirections.Directions)
+        foreach (KeyValuePair<CellDirections, CartesianGridCoordinates> direction in SquareGridDirections.Directions)
         {
-            IGridCoordinates coordinates = new CartesianGridCoordinates(cartesianCellCoordinates.X + direction.Value.x, cartesianCellCoordinates.Y + direction.Value.y);
+            IGridCoordinates coordinates = cartesianCellCoordinates + direction.Value;
 
             if (CheckCoordinatesMatch(neighbourCell.Coordinates, coordinates))
                 return direction.Key;
         }
 
-        Debug.LogError("there was no connection");
-
-        return CellDirections.Up;
+        throw new Exception("There cells was no connection");
     }
 }

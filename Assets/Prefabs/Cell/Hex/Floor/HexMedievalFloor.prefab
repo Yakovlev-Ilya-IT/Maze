@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7402364135194877123}
   - component: {fileID: 7402364135194877125}
   - component: {fileID: 7402364135194877122}
-  - component: {fileID: 2864449322685420632}
+  - component: {fileID: 6389614896039758407}
   m_Layer: 0
   m_Name: HexMedievalFloor
   m_TagString: Untagged
@@ -85,7 +85,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2864449322685420632
+--- !u!114 &6389614896039758407
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,6 +94,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7402364135194877120}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23a39f37c7feb8c4a896813a66c6b48c, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d7dd4b69cf208f42997317bf3f8f1c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

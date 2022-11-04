@@ -1,23 +1,23 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class DepthFirstSearchMazeHexGridGenerator : DepthFirstSearchMazeGridGenerator
 {
-    protected override Grid BuildInitialGrid(int width, int height) => new HexGrid(width, height);
+    protected override MazeDataGrid BuildInitialGrid(int width, int height) => new HexMazeDataGrid(width, height);
 
-    protected override List<CellData> GetUnvisitedNeighbours(CellData currentCell, Grid mazeGrid)
+    protected override List<MazeCellData> GetUnvisitedNeighbours(MazeCellData currentCell, MazeDataGrid mazeGrid, Dictionary<uint, MazeCellData> visitedCells)
     {
-        List<CellData> unvisitedNeighbours = new List<CellData>();
+        List<MazeCellData> unvisitedNeighbours = new List<MazeCellData>();
 
         AxialGridCoordinates axialCellCoordinates = currentCell.Coordinates.ConvertToGridAxial();
 
-        foreach (KeyValuePair<CellDirections, Vector2Int> direction in HexGridDirections.Directions)
+        foreach (KeyValuePair<CellDirections, AxialGridCoordinates> direction in HexGridDirections.Directions)
         {
-            IGridCoordinates neighbourCoordinates = new AxialGridCoordinates(axialCellCoordinates.X + direction.Value.x, axialCellCoordinates.Y + direction.Value.y);
+            IGridCoordinates neighbourCoordinates = axialCellCoordinates + direction.Value;
 
-            if (TryGetNeighbour(neighbourCoordinates, mazeGrid, out CellData neighbour))
+            if (TryGetNeighbour(neighbourCoordinates, mazeGrid, out MazeCellData neighbour))
             {
-                if (!_visitedCells.ContainsKey(neighbour.Id))
+                if (!visitedCells.ContainsKey(neighbour.Id))
                     unvisitedNeighbours.Add(neighbour);
             }
         }
@@ -25,10 +25,8 @@ public class DepthFirstSearchMazeHexGridGenerator : DepthFirstSearchMazeGridGene
         return unvisitedNeighbours;
     }
 
-    protected override void RemoveWall(CellData currentCell, CellData chosenCell)
+    protected override void RemoveWall(MazeCellData currentCell, MazeCellData chosenCell, CellDirections connectionDirection)
     {
-        CellDirections connectionDirection = GetConnectionDirection(currentCell, chosenCell);
-
         switch (connectionDirection)
         {
             case CellDirections.UpLeft:
@@ -56,25 +54,22 @@ public class DepthFirstSearchMazeHexGridGenerator : DepthFirstSearchMazeGridGene
                 chosenCell.Walls[CellDirections.Right] = false;
                 break;
             default:
-                Debug.LogError("there was no hex direction");
-                break;
+                throw new ArgumentException(message: $"Unexpected enum value: {connectionDirection}", paramName: nameof(connectionDirection));
         }
     }
 
-    private CellDirections GetConnectionDirection(CellData currentCell, CellData neighbourCell)
+    protected override CellDirections GetConnectionDirection(MazeCellData currentCell, MazeCellData neighbourCell)
     {
         AxialGridCoordinates axialCellCoordinates = currentCell.Coordinates.ConvertToGridAxial();
 
-        foreach (KeyValuePair<CellDirections, Vector2Int> direction in HexGridDirections.Directions)
+        foreach (KeyValuePair<CellDirections, AxialGridCoordinates> direction in HexGridDirections.Directions)
         {
-            IGridCoordinates coordinates = new AxialGridCoordinates(axialCellCoordinates.X + direction.Value.x, axialCellCoordinates.Y + direction.Value.y);
+            IGridCoordinates coordinates = axialCellCoordinates + direction.Value;
 
             if (CheckCoordinatesMatch(neighbourCell.Coordinates, coordinates))
                 return direction.Key;
         }
 
-        Debug.LogError("there was no connection");
-
-        return CellDirections.UpLeft;
+        throw new Exception("There cells was no connection");
     }
 }

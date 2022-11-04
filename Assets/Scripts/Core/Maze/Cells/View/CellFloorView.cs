@@ -1,12 +1,13 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshRenderer))]
-public class CellFloorView : MonoBehaviour
+public abstract class CellFloorView : MonoBehaviour
 {
-    private MeshRenderer _meshRenderer;
+    protected MeshRenderer _meshRenderer;
 
-    public float SizeX => _meshRenderer.bounds.size.x;
-    public float SizeZ => _meshRenderer.bounds.size.z;
+    public abstract float SizeForCoordinateConversion { get; }
+    public virtual float SizeX => _meshRenderer.bounds.size.x;
+    public virtual float SizeZ => _meshRenderer.bounds.size.z;
 
     public void Initialize()
     {

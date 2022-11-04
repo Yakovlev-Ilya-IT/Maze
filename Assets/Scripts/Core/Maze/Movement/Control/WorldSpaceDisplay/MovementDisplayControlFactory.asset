@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b087759368ee3247b92f140daa8debb, type: 3}
+  m_Name: MovementDisplayControlFactory
+  m_EditorClassIdentifier: 
+  _squareControl: {fileID: 9182701126462196651, guid: 8b1346581c895564ca693c6d4a573add,
+    type: 3}
+  _hexControl: {fileID: 1018262044516239669, guid: 800f4404b88f55c44ba281a9b79cc149,
+    type: 3}

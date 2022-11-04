@@ -5,4 +5,5 @@ public interface IGridCoordinates
 
     public AxialGridCoordinates ConvertToGridAxial();
     public CartesianGridCoordinates ConvertToGridCartesian();
+    public void ConvertToScaledCartesian(float scaleMultiplier, out float x, out float y);
 }
