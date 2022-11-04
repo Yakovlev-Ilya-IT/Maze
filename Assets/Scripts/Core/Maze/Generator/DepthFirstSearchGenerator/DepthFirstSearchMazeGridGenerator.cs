@@ -25,6 +25,8 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 
         Stack<MazeCellData> mazeCells = new Stack<MazeCellData>();
 
+        mazeCells.Push(currentCell);
+
         do
         {
             List<MazeCellData> unvisitedNeighbours = GetUnvisitedNeighbours(currentCell, mazeGrid, _visitedCells);
