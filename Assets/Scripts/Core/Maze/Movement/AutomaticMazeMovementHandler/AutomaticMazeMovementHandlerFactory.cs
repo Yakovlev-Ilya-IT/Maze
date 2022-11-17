@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AutomaticMazeMovementHandlerFactory : MazeMovementHandlerFactory
 {
-    public override IMazeMovementHandler Get(MazeCellType type, IMovable movable, IMazeMovementControl movementControl, MazeCell[,] mazeGrid, MazeCell currentCell)
+    public override IMazeMovementHandler Get(MazeCellType type, IMovable movable, IMazeMovementControl movementControl, IMazeGrid mazeGrid, MazeCell currentCell)
     {
         switch (type)
         {

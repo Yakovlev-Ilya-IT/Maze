@@ -1,4 +1,6 @@
-public interface IGridCoordinates 
+using System;
+
+public interface IGridCoordinates: IEquatable<IGridCoordinates>
 {
     public int X { get; }
     public int Y { get; }

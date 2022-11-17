@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 public abstract class AutomaticMazeMovementHandler: IMazeMovementHandler
 {
-    protected MazeCell[,] _mazeGrid;
-
     private MazeCell _currentCell;
     private MazeCell _targetCell;
 
@@ -14,12 +12,13 @@ public abstract class AutomaticMazeMovementHandler: IMazeMovementHandler
 
     private IMovable _movable;
     private IMazeMovementControl _movementControl;
+    private IMazeGrid _mazeGrid;
 
     private const int NumberOpenNeighbourCellForMovement = 2;
 
     public event Action<MazeCell> TargetReached;
 
-    public AutomaticMazeMovementHandler(IMovable movable, IMazeMovementControl movementControl, MazeCell[,] mazeGrid, MazeCell currentCell)
+    public AutomaticMazeMovementHandler(IMovable movable, IMazeMovementControl movementControl, IMazeGrid mazeGrid, MazeCell currentCell)
     {
         _mazeGrid = mazeGrid;
 
@@ -103,7 +102,7 @@ public abstract class AutomaticMazeMovementHandler: IMazeMovementHandler
         }
     }
 
-    protected abstract MazeCell GetNextCell(MazeCell previousCell, CellDirections nextCellDirection, MazeCell[,] _mazeGrid);
+    protected abstract MazeCell GetNextCell(MazeCell previousCell, CellDirections nextCellDirection, IMazeGrid mazeGrid);
 
     public void StartMove()
     {

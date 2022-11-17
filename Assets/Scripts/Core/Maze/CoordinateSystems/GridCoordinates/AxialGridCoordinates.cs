@@ -46,5 +46,33 @@ public class AxialGridCoordinates : IGridCoordinates
         y = cartesianCoordinates.Y * height * OffsetBetweenCellsByY;
     }
 
+    public override bool Equals(object other)
+    {
+        AxialGridCoordinates coordinates = other as AxialGridCoordinates;
+        if (coordinates == null)
+            return false;
+
+        if (ReferenceEquals(this, coordinates))
+            return true;
+
+        return Equals(coordinates);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 23 + _q.GetHashCode();
+            hash = hash * 23 + _r.GetHashCode();
+            return hash;
+        }
+    }
+
+    public bool Equals(IGridCoordinates other)
+    {
+        return _q.Equals(other.X) && _r.Equals(other.Y);
+    }
+
     public static AxialGridCoordinates operator +(AxialGridCoordinates a, AxialGridCoordinates b) => new AxialGridCoordinates(a._q + b._q, a._r + b._r);
 }
