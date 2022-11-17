@@ -29,5 +29,33 @@ public class CartesianGridCoordinates : IGridCoordinates
         y = _y * scaleMultiplier;
     }
 
+    public override bool Equals(object other)
+    {       
+        CartesianGridCoordinates coordinates = other as CartesianGridCoordinates;
+        if (coordinates == null)
+            return false;
+
+        if (ReferenceEquals(this, coordinates))
+            return true;
+
+        return Equals(coordinates);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 23 + _x.GetHashCode();
+            hash = hash * 23 + _y.GetHashCode();
+            return hash;
+        }
+    }
+
+    public bool Equals(IGridCoordinates other)
+    {
+        return _x.Equals(other.X) && _y.Equals(other.Y);
+    }
+
     public static CartesianGridCoordinates operator +(CartesianGridCoordinates a, CartesianGridCoordinates b) => new CartesianGridCoordinates(a._x + b._x, a._y + b._y);
 }

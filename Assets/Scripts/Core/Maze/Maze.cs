@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class Maze: MonoBehaviour
+public class Maze: MonoBehaviour, IMazeGrid
 {
-    private MazeCell[,] _grid;
+    private Dictionary<IGridCoordinates, MazeCell> _grid = new Dictionary<IGridCoordinates, MazeCell>();
 
     private MazeCellType _cellType;
     private int _width;
@@ -16,7 +18,7 @@ public class Maze: MonoBehaviour
     private MazeCellFactory _cellFactory;
     private MazeCellContentFactory _cellContentFactory;
 
-    public MazeCell[,] Grid => _grid;
+    public Dictionary<IGridCoordinates, MazeCell> Grid => _grid;
     public MazeCell StartCell => _startCell;
     public MazeCell FinishCell => _finishCell;
 
@@ -67,22 +69,16 @@ public class Maze: MonoBehaviour
 
         MazeDataGrid dataGrid = gridGenerator.Generate(width, height);
 
-        _grid = new MazeCell[width, height];
-
-        for (int i = 0; i < dataGrid.Width; i++)
+        _grid = new Dictionary<IGridCoordinates, MazeCell>();
+        
+        foreach (KeyValuePair<IGridCoordinates, MazeCellData> data in dataGrid.CellsData)
         {
-            for (int j = 0; j < dataGrid.Height; j++)
-            {
-                MazeCellData cellData = dataGrid.CellsData[i, j];
+            MazeCellData cellData = data.Value;
+            if (cellData == null)
+                continue;
 
-                if (cellData == null)
-                    continue;
-
-
-                MazeCell cell = BuildCell(cellData);
-
-                _grid[i, j] = cell;
-            }
+            MazeCell cell = BuildCell(cellData);
+            _grid.Add(data.Key, cell);
         }
     }
 
@@ -114,7 +110,7 @@ public class Maze: MonoBehaviour
         {
             randomCell = GetRandomCell();
         }
-        while (randomCell == null && randomCell == _finishCell);
+        while (randomCell == _finishCell);
 
         randomCell.Content = _cellContentFactory.Get(MazeCellContentType.Start);
 
@@ -129,7 +125,7 @@ public class Maze: MonoBehaviour
         {
             randomCell = GetRandomCell();
         }
-        while (randomCell == null && randomCell == _startCell);
+        while (randomCell == _startCell);
 
         randomCell.Content = _cellContentFactory.Get(MazeCellContentType.Finish);
 
@@ -142,17 +138,34 @@ public class Maze: MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 10);
     }
 
-    private MazeCell GetRandomCell() => _grid[UnityEngine.Random.Range(0, _width), UnityEngine.Random.Range(0, _height)];
+    public MazeCell GetRandomCell()
+    {
+        List<IGridCoordinates> keys = Enumerable.ToList(_grid.Keys);
+
+        return _grid[keys[UnityEngine.Random.Range(0, keys.Count)]];
+    }
+
+    public bool TryGetCell(IGridCoordinates coordinates, out MazeCell cell)
+    {
+        if (CheckOutOfBounds(coordinates))
+        {
+            cell = _grid[coordinates];
+            if (cell != null)
+                return true;
+            else
+                return false;
+        }
+
+        cell = null;
+        return false;
+    }
+
+    private bool CheckOutOfBounds(IGridCoordinates coordinates) => _grid.ContainsKey(coordinates);
 
     public void Clear()
     {
-        if( _grid != null )
-            for (int i = 0; i < _width; i++)
-            {
-                for (int j = 0; j < _height; j++)
-                {
-                    Destroy(_grid[i, j].gameObject);
-                }
-            }
+        if (_grid != null)
+            foreach (KeyValuePair<IGridCoordinates, MazeCell> cell in _grid)
+                Destroy(cell.Value.gameObject);
     }
 }

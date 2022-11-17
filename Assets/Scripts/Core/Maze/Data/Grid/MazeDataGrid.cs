@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class MazeDataGrid
@@ -5,11 +7,11 @@ public abstract class MazeDataGrid
     private int _width;
     private int _height;
 
-    private MazeCellData[,] _cellsData;
+    private Dictionary<IGridCoordinates, MazeCellData> _cellsData = new Dictionary<IGridCoordinates,MazeCellData>();
 
     public int Width => _width;
     public int Height => _height;
-    public MazeCellData[,] CellsData => _cellsData;
+    public Dictionary<IGridCoordinates, MazeCellData> CellsData => _cellsData;
 
     public MazeDataGrid(int width, int height)
     {
@@ -21,7 +23,7 @@ public abstract class MazeDataGrid
 
     private void Fill()
     {
-        _cellsData = new MazeCellData[_width, _height];
+        _cellsData = new Dictionary<IGridCoordinates, MazeCellData>();
 
         uint idCounter = 0;
 
@@ -29,7 +31,8 @@ public abstract class MazeDataGrid
         {
             for (int y = 0; y < _height; y++)
             {
-                _cellsData[x, y] = GetNewCell(new CartesianGridCoordinates(x, y), idCounter);
+                MazeCellData cell = GetNewCell(new CartesianGridCoordinates(x, y), idCounter);
+                _cellsData.Add(cell.Coordinates, cell);
                 idCounter++;
             }
         }
@@ -39,13 +42,9 @@ public abstract class MazeDataGrid
 
     public bool TryGetCell(IGridCoordinates coordinates, out MazeCellData cell)
     {
-        CartesianGridCoordinates cartesianCoordinates = coordinates.ConvertToGridCartesian();
-        int x = cartesianCoordinates.X;
-        int y = cartesianCoordinates.Y;
-
-        if (CheckOutOfBounds(x, y))
+        if (CheckOutOfBounds(coordinates))
         {
-            cell = _cellsData[x, y];
+            cell = _cellsData[coordinates];
             if (cell != null)
                 return true;
             else
@@ -56,17 +55,12 @@ public abstract class MazeDataGrid
         return false;
     }
 
-    private bool CheckOutOfBounds(int x, int y) => x >= 0 && x < _width && y >= 0 && y < _height;
+    private bool CheckOutOfBounds(IGridCoordinates coordinates) => _cellsData.ContainsKey(coordinates);
 
     public MazeCellData GetRandomCell()
     {
-        MazeCellData randomCell;
+        List<IGridCoordinates> keys = Enumerable.ToList(_cellsData.Keys);
 
-        do
-        {
-            randomCell = _cellsData[Random.Range(0, _cellsData.GetLength(0)), Random.Range(0, _cellsData.GetLength(1))];
-        } while (randomCell == null);
-
-        return randomCell;
+        return _cellsData[keys[Random.Range(0, keys.Count)]];
     }
 }

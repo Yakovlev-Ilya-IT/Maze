@@ -47,7 +47,7 @@ public class Test : MonoBehaviour
         _character.SpawnTo(_maze.StartCell.SurfaceCenterPosition);
 
         control = _controlFactory.Get(MazeCellType.Square, _character.gameObject.transform);
-        movementHandler = automaticMazeMovementHandlerFactory.Get(MazeCellType.Square, _character, control, _maze.Grid, _maze.StartCell);
+        movementHandler = automaticMazeMovementHandlerFactory.Get(MazeCellType.Square, _character, control, _maze, _maze.StartCell);
 
         movementHandler.TargetReached += OnTargetReached;
     }
@@ -77,7 +77,7 @@ public class Test : MonoBehaviour
         _character.SpawnTo(_maze.StartCell.SurfaceCenterPosition);
 
         control = _controlFactory.Get(MazeCellType.Hex, _character.gameObject.transform);
-        movementHandler = automaticMazeMovementHandlerFactory.Get(MazeCellType.Hex, _character, control, _maze.Grid, _maze.StartCell);
+        movementHandler = automaticMazeMovementHandlerFactory.Get(MazeCellType.Hex, _character, control, _maze, _maze.StartCell);
         movementHandler.TargetReached += OnTargetReached;
     }
 
@@ -99,7 +99,7 @@ public class Test : MonoBehaviour
         _character.SpawnTo(_maze.StartCell.SurfaceCenterPosition);
 
         control = _controlFactory.Get(mazeCellType, _character.gameObject.transform);
-        movementHandler = automaticMazeMovementHandlerFactory.Get(mazeCellType, _character, control, _maze.Grid, _maze.StartCell);
+        movementHandler = automaticMazeMovementHandlerFactory.Get(mazeCellType, _character, control, _maze, _maze.StartCell);
         movementHandler.TargetReached += OnTargetReached;
     }
 }
