@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MazeCellContentFactory", menuName = "Factories/CellContent")]
@@ -25,7 +26,6 @@ public class MazeCellContentFactory : ScriptableObject
                 return _finishPrefab;
         }
 
-        Debug.LogError($"No prefab for {type}");
-        return _emptyPrefab;
+        throw new ArgumentException($"No prefab for {type}");
     }
 }

@@ -9,7 +9,7 @@ public class MazeCell : MonoBehaviour
 
     private IGridCoordinates _gridCoordinates;
     private Dictionary<CellDirections, bool> _walls;
-    private int _openNeighbour;
+    private List<IGridCoordinates> _neighboursCoordinates;
 
     private MazeCellContent _content;
 
@@ -18,7 +18,8 @@ public class MazeCell : MonoBehaviour
     public float SizeZ => _view.FloorSizeZ;
 
     public Dictionary<CellDirections, bool> Walls => _walls;
-    public int OpenNeighbours => _openNeighbour;
+    public List<IGridCoordinates> NeighboursCoordinates => _neighboursCoordinates;
+    public int Neighbours => _neighboursCoordinates.Count;
 
     public IGridCoordinates GridCoordinates => _gridCoordinates;
     public Vector3 SurfaceCenterPosition => _surfaceCenterPoint.position;
@@ -41,7 +42,7 @@ public class MazeCell : MonoBehaviour
     {
         _gridCoordinates = data.Coordinates;
         _walls = data.Walls;
-        _openNeighbour = _walls.Where(s => !s.Value).Count();
+        //_neighboursCoordinates = data.NeighboursCoordinates;
 
         Content = content; 
 

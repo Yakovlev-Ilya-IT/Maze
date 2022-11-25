@@ -8,13 +8,13 @@ public class Maze: MonoBehaviour, IMazeGrid
     private Dictionary<IGridCoordinates, MazeCell> _grid = new Dictionary<IGridCoordinates, MazeCell>();
 
     private MazeCellType _cellType;
-    private int _width;
-    private int _height;
+    private IMazeGridForm _form;
 
     private MazeCell _startCell;
     private MazeCell _finishCell;
 
     private MazeGridGeneratorFactory _gridGeneratorFactory;
+    private MazeFormFactory _formFactory;
     private MazeCellFactory _cellFactory;
     private MazeCellContentFactory _cellContentFactory;
 
@@ -22,52 +22,25 @@ public class Maze: MonoBehaviour, IMazeGrid
     public MazeCell StartCell => _startCell;
     public MazeCell FinishCell => _finishCell;
 
-    public MazeGridGeneratorFactory GridGeneratorFactory
+    public void Initialize(MazeCellType cellType, MazeGridGeneratorFactory gridGeneratorFactory, MazeFormFactory formFactory, MazeCellFactory cellFactory, MazeCellContentFactory cellContentFactory)
     {
-        set
-        {
-            if (value == null)
-                throw new NullReferenceException(nameof(_gridGeneratorFactory));
-            _gridGeneratorFactory = value;
-        }
+        _cellType = cellType;
+
+        _gridGeneratorFactory = gridGeneratorFactory;
+        _formFactory = formFactory;
+        _cellFactory = cellFactory;
+        _cellContentFactory = cellContentFactory;
     }
 
-    public MazeCellFactory CellFactory
+    public void Build(MazeGenerationAlgorithm generationAlgoritm, MazeFormType formType, int width, int height)
     {
-        set
-        {
-            if (value == null)
-                throw new NullReferenceException(nameof(_cellFactory));
-            _cellFactory = value;
-        }
-    }
+        if (width <= 1 || height <= 1)
+            throw new ArgumentException("Error widtg or height for maze");
 
-    public MazeCellContentFactory CellContentFactory
-    {
-        set
-        {
-            if(value == null)
-                throw new NullReferenceException(nameof(_cellContentFactory));
-            _cellContentFactory = value;
-        }
-    }
+        IMazeGridGenerator gridGenerator = _gridGeneratorFactory.Get(generationAlgoritm);
+        _form = _formFactory.Get(formType, width, height);
 
-    public void Initialize(MazeGridGeneratorFactory gridGeneratorFactory, MazeCellFactory cellFactory, MazeCellContentFactory cellContentFactory)
-    {
-        GridGeneratorFactory = gridGeneratorFactory;
-        CellFactory = cellFactory;
-        CellContentFactory = cellContentFactory;
-    }
-
-    public void Build(MazeCellType type, int width, int height)
-    {
-        _cellType = type;
-        _width = width;
-        _height = height;
-
-        IMazeGridGenerator gridGenerator = _gridGeneratorFactory.Get(type);
-
-        MazeDataGrid dataGrid = gridGenerator.Generate(width, height);
+        MazeDataGrid dataGrid = gridGenerator.Generate(_form);
 
         _grid = new Dictionary<IGridCoordinates, MazeCell>();
         
@@ -90,8 +63,8 @@ public class Maze: MonoBehaviour, IMazeGrid
 
         Vector2 cellCartesianCoordinates = cell.GetScaledCartesianCoordinate();
 
-        float OffsetX = cell.SizeX * (_width - cell.SizeX * 0.5f) * 0.5f;
-        float OffsetY = cell.SizeZ * (_height - cell.SizeZ * 0.5f) * 0.5f;
+        float OffsetX = cell.SizeX * _form.XOffset;
+        float OffsetY = cell.SizeZ * _form.YOffset;
 
         Vector3 position = new Vector3(cellCartesianCoordinates.x - OffsetX, 0, cellCartesianCoordinates.y - OffsetY);
 
@@ -132,11 +105,79 @@ public class Maze: MonoBehaviour, IMazeGrid
         _finishCell = randomCell;
     }
 
-    void OnDrawGizmosSelected()
+    public void SetStartPoint(IGridCoordinates coordinates)
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 10);
+        if (TryGetCell(coordinates, out MazeCell cell))
+        {
+            if (cell == _finishCell)
+                _finishCell = null;
+
+            cell.Content = _cellContentFactory.Get(MazeCellContentType.Start);
+            _startCell = cell;
+        }
+        else
+        {
+            throw new ArgumentException("error coordinates");
+        }
     }
+
+    public void SetFinishPoint(IGridCoordinates coordinates)
+    {
+        if (TryGetCell(coordinates, out MazeCell cell))
+        {
+            if (cell == _startCell)
+                _startCell = null;
+
+            cell.Content = _cellContentFactory.Get(MazeCellContentType.Finish);
+            _finishCell = cell;
+        }
+        else
+        {
+            throw new ArgumentException("error coordinates");
+        }
+    }
+
+    //public void SetFinishDistantFromStart()
+    //{
+    //    if (_startCell == null)
+    //        throw new NullReferenceException("StartCell is null");
+
+    //    List<IGridCoordinates> visitedCellsCoordinates = new List<IGridCoordinates>();
+
+    //    MazeCell currentCell = _startCell;
+    //    MazeCell finishCell;
+
+    //    visitedCellsCoordinates.Add(currentCell.GridCoordinates);
+
+    //    Stack<MazeCell> mazeCells = new Stack<MazeCell>();
+
+    //    mazeCells.Push(currentCell);
+
+    //    while (mazeCells.Count > 0)
+    //    {
+    //        currentCell = mazeCells.Pop();
+
+    //        List<MazeCell> unvisitedNeighbours = GetUnvisitedNeighbours(currentCell, mazeGrid, visitedCells);
+
+    //        if (unvisitedNeighbours.Count > 0)
+    //        {
+    //            mazeCells.Push(currentCell);
+
+    //            MazeCellData chosenCell = unvisitedNeighbours[Random.Range(0, unvisitedNeighbours.Count)];
+
+    //            visitedCells.Add(chosenCell.Id, chosenCell);
+    //            mazeCells.Push(chosenCell);
+    //        }
+    //    }
+    //}
+
+    //private List<MazeCell> GetUnvisitedNeighbours(MazeCell currentCell, List<IGridCoordinates> visitedCellsCoordinates)
+    //{
+    //    foreach (KeyValuePair<CellDirections, bool> wall in currentCell.Walls)
+    //    {
+
+    //    }
+    //}
 
     public MazeCell GetRandomCell()
     {
@@ -164,6 +205,9 @@ public class Maze: MonoBehaviour, IMazeGrid
 
     public void Clear()
     {
+        _startCell = null;
+        _finishCell = null;
+
         if (_grid != null)
             foreach (KeyValuePair<IGridCoordinates, MazeCell> cell in _grid)
                 Destroy(cell.Value.gameObject);

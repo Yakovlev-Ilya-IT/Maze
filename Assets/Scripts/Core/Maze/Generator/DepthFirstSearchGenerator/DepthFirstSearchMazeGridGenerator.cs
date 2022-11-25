@@ -5,9 +5,9 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 {
     private Dictionary<uint, MazeCellData> _visitedCells = new Dictionary<uint, MazeCellData>();
 
-    public MazeDataGrid Generate(int width, int height)
+    public MazeDataGrid Generate(IMazeGridForm form)
     {
-        MazeDataGrid mazeGrid = BuildInitialGrid(width, height);
+        MazeDataGrid mazeGrid = BuildInitialGrid(form);
 
         GenerateMaze(mazeGrid);
 
@@ -15,7 +15,7 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 
     }
 
-    protected abstract MazeDataGrid BuildInitialGrid(int width, int height);
+    private MazeDataGrid BuildInitialGrid(IMazeGridForm form) => new MazeDataGrid(form);
 
     private void GenerateMaze(MazeDataGrid mazeGrid)
     {
@@ -27,31 +27,35 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 
         mazeCells.Push(currentCell);
 
-        do
+        while (mazeCells.Count > 0)
         {
+            currentCell = mazeCells.Pop();
+
             List<MazeCellData> unvisitedNeighbours = GetUnvisitedNeighbours(currentCell, mazeGrid, _visitedCells);
 
             if (unvisitedNeighbours.Count > 0)
             {
+                mazeCells.Push(currentCell);
+
                 MazeCellData chosenCell = unvisitedNeighbours[Random.Range(0, unvisitedNeighbours.Count)];
 
-                CellDirections connectionDirection = GetConnectionDirection(currentCell, chosenCell);
-                RemoveWall(currentCell, chosenCell, connectionDirection);
+                CellDirections conectionFromCurrentToChosen = GetConnectionDirection(currentCell, chosenCell);
+                CellDirections conectionFromChosenToCurrent= GetConnectionDirection(chosenCell, currentCell);
+
+                currentCell.AddNeighbourCoordinates(conectionFromCurrentToChosen, chosenCell.Coordinates);
+                chosenCell.AddNeighbourCoordinates(conectionFromChosenToCurrent, currentCell.Coordinates);
+
+                //RemoveWall(currentCell, chosenCell, connectionDirection);
 
                 _visitedCells.Add(chosenCell.Id, chosenCell);
                 mazeCells.Push(chosenCell);
-                currentCell = chosenCell;
             }
-            else
-            {
-                currentCell = mazeCells.Pop();
-            }
-        } while (mazeCells.Count > 0);
+        }
     }
 
     protected abstract CellDirections GetConnectionDirection(MazeCellData currentCell, MazeCellData neighbourCell);
 
-    protected abstract void RemoveWall(MazeCellData currentCell, MazeCellData chosenCell, CellDirections connectionDirection);
+    //protected abstract void RemoveWall(MazeCellData currentCell, MazeCellData chosenCell, CellDirections connectionDirection);
 
     protected abstract List<MazeCellData> GetUnvisitedNeighbours(MazeCellData currentCell, MazeDataGrid mazeGrid, Dictionary<uint, MazeCellData> visitedCells);
 

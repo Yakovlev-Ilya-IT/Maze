@@ -1,4 +1,4 @@
 public interface IMazeGridGenerator
 {
-    public MazeDataGrid Generate(int width, int height);
+    public MazeDataGrid Generate(IMazeGridForm form);
 }

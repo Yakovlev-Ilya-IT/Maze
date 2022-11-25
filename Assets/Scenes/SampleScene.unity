@@ -924,15 +924,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cellFactory: {fileID: 11400000, guid: 8ec37b8d74f552a4db508a7b10456b7e, type: 2}
-  _controlFactory: {fileID: 11400000, guid: 38c6e0a9d94fb9c4faf60c159c07222a, type: 2}
+  _squareControlFactory: {fileID: 11400000, guid: e065fb70117f7b54385dfc82f4003fcd,
+    type: 2}
+  _hexControlFactory: {fileID: 11400000, guid: 33b4c37b476a9ac44a8bacf42f787186, type: 2}
   _cellContentFactory: {fileID: 11400000, guid: c1b4118fcdd295348896fce9edc278b6,
     type: 2}
   _maze: {fileID: 1863275278}
-  _type: 0
   _character: {fileID: 611584972}
-  Width: 10
-  Height: 10
-  direction: 0
+  FormType: 4
+  GenerationAlgoritm: 0
+  Width: 11
+  Height: 11
 --- !u!4 &911044227
 Transform:
   m_ObjectHideFlags: 0
@@ -1101,7 +1103,7 @@ GameObject:
   m_Layer: 0
   m_Name: Maze
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
