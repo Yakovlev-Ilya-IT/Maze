@@ -1,18 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class HexMazeBuilder : MonoBehaviour
+public class HexMazeBuilder : IMazeBuilder
 {
-    // Start is called before the first frame update
-    void Start()
+    public Maze GetResult()
     {
-        
+        throw new System.NotImplementedException();
     }
 
-    // Update is called once per frame
-    void Update()
+    public IMazeBuilder SetGenerationAlgoritm(MazeGenerationAlgorithm generationAlgorithm)
     {
-        
+        throw new System.NotImplementedException();
+    }
+
+    public IMazeBuilder SetMazeForm(MazeFormType form)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public IMazeBuilder SetSize(int width, int height)
+    {
+        throw new System.NotImplementedException();
     }
 }
