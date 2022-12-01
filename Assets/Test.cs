@@ -8,7 +8,6 @@ public class Test : MonoBehaviour
     public HexMazeMovementControlFactory _hexControlFactory;
     public MazeCellContentFactory _cellContentFactory;
 
-
     public Maze _maze;
     public Character _character;
 
@@ -21,12 +20,10 @@ public class Test : MonoBehaviour
     IMazeMovementControl control;
     IMazeMovementHandler movementHandler;
 
-
+    MazeMovementHandlerFactory movementHandlerFactory = new MazeMovementHandlerFactory();
 
     public void StartSquareGame()
     {
-        SquareMazeMovementHandlerFactory movementHandlerFactory = new SquareMazeMovementHandlerFactory();
-
         _maze.Clear();
         control?.Disable();
 
@@ -40,7 +37,7 @@ public class Test : MonoBehaviour
 
         _maze.Build(GenerationAlgoritm, FormType, Width, Height);
         _maze.SetRandomStartPosition();
-        _maze.SetRandomFinishPosition();
+        _maze.SetFinishDistantFromStart();
 
         _character.Initialize();
         _character.SpawnTo(_maze.StartCell.SurfaceCenterPosition);
@@ -62,8 +59,6 @@ public class Test : MonoBehaviour
 
     public void StartHexGame()
     {
-        HexMazeMovementHandlerFactory movementHandlerFactory = new HexMazeMovementHandlerFactory();
-
         _maze.Clear();
         control?.Disable();
 
@@ -77,7 +72,7 @@ public class Test : MonoBehaviour
 
         _maze.Build(GenerationAlgoritm, FormType, Width, Height);
         _maze.SetRandomStartPosition();
-        _maze.SetRandomFinishPosition();
+        _maze.SetFinishDistantFromStart();
 
         _character.Initialize();
         _character.SpawnTo(_maze.StartCell.SurfaceCenterPosition);
@@ -104,14 +99,12 @@ public class Test : MonoBehaviour
         {
             mazeGridGeneratorFactory = new HexMazeGridGeneratorFactory();
             mazeFormFactory = new HexMazeFormFactory();
-            mazeMovementHandlerFactory = new HexMazeMovementHandlerFactory();
             mazeMovementControlFactory = _hexControlFactory;
         }
         else
         {
             mazeGridGeneratorFactory = new SquareMazeGridGeneratorFactory();
             mazeFormFactory = new SquareMazeFormFactory();
-            mazeMovementHandlerFactory= new SquareMazeMovementHandlerFactory();
             mazeMovementControlFactory = _squareControlFactory;
         }
 
@@ -126,13 +119,13 @@ public class Test : MonoBehaviour
 
         _maze.Build(GenerationAlgoritm, mazeFormType, width, height);
         _maze.SetRandomStartPosition();
-        _maze.SetRandomFinishPosition();
+        _maze.SetFinishDistantFromStart();
 
         _character.Initialize();
         _character.SpawnTo(_maze.StartCell.SurfaceCenterPosition);
 
         control = mazeMovementControlFactory.Get(MovementControlType.WorldSpaceDisplay, _character.gameObject.transform);
-        movementHandler = mazeMovementHandlerFactory.Get(MovementHandlerType.Automatic, _character, control, _maze, _maze.StartCell);
+        movementHandler = movementHandlerFactory.Get(MovementHandlerType.Automatic, _character, control, _maze, _maze.StartCell);
 
         movementHandler.TargetReached += OnTargetReached;
     }

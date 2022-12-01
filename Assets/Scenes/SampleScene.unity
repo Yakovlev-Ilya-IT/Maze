@@ -933,8 +933,8 @@ MonoBehaviour:
   _character: {fileID: 611584972}
   FormType: 4
   GenerationAlgoritm: 0
-  Width: 11
-  Height: 11
+  Width: 2
+  Height: 2
 --- !u!4 &911044227
 Transform:
   m_ObjectHideFlags: 0
