@@ -8,14 +8,16 @@ public class ParallelogramSquareMazeForm : IMazeGridForm
     public float XOffset => (_width + (_height - 1) / 2f) / 2f - 0.5f;
     public float YOffset => _height / 2f - 0.5f;
 
-    public ParallelogramSquareMazeForm(int width, int height)
+    private void Initialize(int width, int height)
     {
         _width = width;
         _height = height;
     }
 
-    public List<IGridCoordinates> GenerateGridCoordinates()
+    public List<IGridCoordinates> GenerateGridCoordinates(int width, int height)
     {
+        Initialize(width, height);
+
         List<IGridCoordinates> gridCoordinates = new List<IGridCoordinates>();
 
         for (int y = 0; y < _height; y++)

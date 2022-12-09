@@ -1,6 +1,6 @@
 public enum MazeFormType
 {
-    Rectangle = 0,
+    Rectangle,
     Ellipse,
     Triangle,
     Parallelogram,

@@ -5,9 +5,9 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 {
     private Dictionary<uint, MazeCellData> _visitedCells = new Dictionary<uint, MazeCellData>();
 
-    public MazeDataGrid Generate(IMazeGridForm form)
+    public MazeDataGrid Generate(IMazeGridForm form, int width, int height)
     {
-        MazeDataGrid mazeGrid = BuildInitialGrid(form);
+        MazeDataGrid mazeGrid = BuildInitialGrid(form, width, height);
 
         GenerateMaze(mazeGrid);
 
@@ -15,7 +15,7 @@ public abstract class DepthFirstSearchMazeGridGenerator : IMazeGridGenerator
 
     }
 
-    private MazeDataGrid BuildInitialGrid(IMazeGridForm form) => new MazeDataGrid(form);
+    private MazeDataGrid BuildInitialGrid(IMazeGridForm form, int width, int height) => new MazeDataGrid(form, width, height);
 
     private void GenerateMaze(MazeDataGrid mazeGrid)
     {

@@ -7,14 +7,11 @@ public class Maze: MonoBehaviour, IMazeGrid
 {
     private Dictionary<IGridCoordinates, MazeCell> _grid = new Dictionary<IGridCoordinates, MazeCell>();
 
-    private MazeCellType _cellType;
-    private IMazeGridForm _form;
+    private MazeSetup _config;
 
     private MazeCell _startCell;
     private MazeCell _finishCell;
 
-    private MazeGridGeneratorFactory _gridGeneratorFactory;
-    private MazeFormFactory _formFactory;
     private MazeCellFactory _cellFactory;
     private MazeCellContentFactory _cellContentFactory;
 
@@ -22,25 +19,23 @@ public class Maze: MonoBehaviour, IMazeGrid
     public MazeCell StartCell => _startCell;
     public MazeCell FinishCell => _finishCell;
 
-    public void Initialize(MazeCellType cellType, MazeGridGeneratorFactory gridGeneratorFactory, MazeFormFactory formFactory, MazeCellFactory cellFactory, MazeCellContentFactory cellContentFactory)
-    {
-        _cellType = cellType;
+    private int Width => _config.Width;
+    private int Height => _config.Height;
+    public MazeCellType CellType => _config.CellType;
+    public IMazeGridForm Form => _config.Form;
+    public IMazeGridGenerator GridGenerator => _config.GridGenerator;
 
-        _gridGeneratorFactory = gridGeneratorFactory;
-        _formFactory = formFactory;
+    public void Initialize(MazeCellFactory cellFactory, MazeCellContentFactory cellContentFactory)
+    {
         _cellFactory = cellFactory;
         _cellContentFactory = cellContentFactory;
     }
 
-    public void Build(MazeGenerationAlgorithm generationAlgoritm, MazeFormType formType, int width, int height)
+    public void Build(MazeSetup config)
     {
-        if (width <= 1 || height <= 1)
-            throw new ArgumentException("Error widtg or height for maze");
+        _config = config;
 
-        IMazeGridGenerator gridGenerator = _gridGeneratorFactory.Get(generationAlgoritm);
-        _form = _formFactory.Get(formType, width, height);
-
-        MazeDataGrid dataGrid = gridGenerator.Generate(_form);
+        MazeDataGrid dataGrid = GridGenerator.Generate(Form, Width, Height);
 
         _grid = new Dictionary<IGridCoordinates, MazeCell>();
         
@@ -59,12 +54,12 @@ public class Maze: MonoBehaviour, IMazeGrid
     {
         MazeCellContent cellContent = _cellContentFactory.Get(MazeCellContentType.Empty);
 
-        MazeCell cell = _cellFactory.Get(_cellType, data, cellContent);
+        MazeCell cell = _cellFactory.Get(CellType, data, cellContent);
 
         Vector2 cellCartesianCoordinates = cell.GetScaledCartesianCoordinate();
 
-        float OffsetX = cell.SizeX * _form.XOffset;
-        float OffsetY = cell.SizeZ * _form.YOffset;
+        float OffsetX = cell.SizeX * Form.XOffset;
+        float OffsetY = cell.SizeZ * Form.YOffset;
 
         Vector3 position = new Vector3(cellCartesianCoordinates.x - OffsetX, 0, cellCartesianCoordinates.y - OffsetY);
 
@@ -196,7 +191,7 @@ public class Maze: MonoBehaviour, IMazeGrid
             if (TryGetCell(neighbour.Value, out MazeCell cell))
                 unvisitedNeighbours.Add(cell);
             else
-                throw new Exception("erroneous coordinates");
+                throw new Exception("error coordinates");
         }
 
         return unvisitedNeighbours;

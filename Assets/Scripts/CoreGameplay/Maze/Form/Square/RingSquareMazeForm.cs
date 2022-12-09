@@ -12,7 +12,7 @@ public class RingSquareMazeForm : IMazeGridForm
 
     public float YOffset => 0;
 
-    public RingSquareMazeForm(int width, int height)
+    private void Initialize(int width, int height)
     {
         if (width > height)
             _outsideRadius = width / 2;
@@ -22,8 +22,10 @@ public class RingSquareMazeForm : IMazeGridForm
         _insideRadius = _outsideRadius / 2;
     }
 
-    public List<IGridCoordinates> GenerateGridCoordinates()
+    public List<IGridCoordinates> GenerateGridCoordinates(int width, int height)
     {
+        Initialize(width, height);
+
         List<IGridCoordinates> gridCoordinates = new List<IGridCoordinates>();
 
         for (int x = -_outsideRadius; x <= _outsideRadius; x++)

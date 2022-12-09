@@ -9,14 +9,16 @@ public class EllipseSquareMazeForm : IMazeGridForm
     public float XOffset => 0;
     public float YOffset => 0;
 
-    public EllipseSquareMazeForm(int a, int b)
+    private void Initialize(int a, int b)
     {
         _a = a / 2;
         _b = b / 2;
     }
 
-    public List<IGridCoordinates> GenerateGridCoordinates()
+    public List<IGridCoordinates> GenerateGridCoordinates(int a, int b)
     {
+        Initialize(a, b);
+
         List<IGridCoordinates> gridCoordinates = new List<IGridCoordinates>();
 
         for (int x = -_a; x <= _a; x++)

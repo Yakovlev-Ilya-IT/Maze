@@ -4,5 +4,5 @@ public interface IMazeGridForm
 {
     public float XOffset { get; }
     public float YOffset { get; }
-    public List<IGridCoordinates> GenerateGridCoordinates();
+    public List<IGridCoordinates> GenerateGridCoordinates(int width, int height);
 }

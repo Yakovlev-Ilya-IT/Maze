@@ -10,7 +10,7 @@ public class RingHexMazeForm : IMazeGridForm
 
     public float YOffset => 0;
 
-    public RingHexMazeForm(int width, int height)
+    private void Initialize(int width, int height)
     {
         if (width > height)
             _outsideRadius = width / 2;
@@ -20,8 +20,10 @@ public class RingHexMazeForm : IMazeGridForm
         _insideRadius = _outsideRadius / 2;
     }
 
-    public List<IGridCoordinates> GenerateGridCoordinates()
+    public List<IGridCoordinates> GenerateGridCoordinates(int width, int height)
     {
+        Initialize(width, height);
+
         List<IGridCoordinates> gridCoordinates = new List<IGridCoordinates>();
 
         for (int q = -_outsideRadius; q <= _outsideRadius; q++)

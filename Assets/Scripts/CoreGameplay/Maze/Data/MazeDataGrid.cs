@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class MazeDataGrid
 {
+    private int _width;
+    private int _height;
     private IMazeGridForm _form;
 
     private Dictionary<IGridCoordinates, MazeCellData> _cellsData;
 
     public Dictionary<IGridCoordinates, MazeCellData> CellsData => _cellsData;
 
-    public MazeDataGrid(IMazeGridForm form)
+    public MazeDataGrid(IMazeGridForm form, int width, int height)
     {
+        _width = width;
+        _height = height;
         _form = form;
 
         FillGrid();
@@ -19,7 +23,7 @@ public class MazeDataGrid
 
     private void FillGrid()
     {
-        List<IGridCoordinates> gridCoordinates = _form.GenerateGridCoordinates();
+        List<IGridCoordinates> gridCoordinates = _form.GenerateGridCoordinates(_width, _height);
         _cellsData = new Dictionary<IGridCoordinates, MazeCellData>();
 
         uint id = 0;

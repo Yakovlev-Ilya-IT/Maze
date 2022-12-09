@@ -9,14 +9,16 @@ public class RectangleHexMazeForm : IMazeGridForm
     public float XOffset => _width / 2f;
     public float YOffset => _height / 2f - 0.5f;
 
-    public RectangleHexMazeForm(int width, int height)
+    private void Initialize(int width, int height)
     {
         _width = width;
         _height = height;
     }
 
-    public List<IGridCoordinates> GenerateGridCoordinates()
+    public List<IGridCoordinates> GenerateGridCoordinates(int width, int height)
     {
+        Initialize(width, height);
+
         List<IGridCoordinates> gridCoordinates = new List<IGridCoordinates>();
 
         for (int r = 0; r < _height; r++)

@@ -9,7 +9,7 @@ public class EllipseHexMazeForm : IMazeGridForm
     public float XOffset => 0.5f;
     public float YOffset => 0;
 
-    public EllipseHexMazeForm(int a, int b)
+    private void Initialize(int a, int b)
     {
         if(a > b)
         {
@@ -23,8 +23,10 @@ public class EllipseHexMazeForm : IMazeGridForm
         }
     }
 
-    public List<IGridCoordinates> GenerateGridCoordinates()
+    public List<IGridCoordinates> GenerateGridCoordinates(int a, int b)
     {
+        Initialize(a, b);
+
         List<IGridCoordinates> gridCoordinates = new List<IGridCoordinates>();
 
         for (int q = -_a; q <= _a; q++)

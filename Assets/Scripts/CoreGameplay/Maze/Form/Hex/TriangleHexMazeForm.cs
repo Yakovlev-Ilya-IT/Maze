@@ -7,7 +7,7 @@ public class TriangleHexMazeForm : IMazeGridForm
     public float XOffset => (_size + _size / 2f) / 3f;
     public float YOffset => _size / 3f;
 
-    public TriangleHexMazeForm(int width, int height)
+    private void Initialize(int width, int height)
     {
         if(width > height)
             _size = width;
@@ -15,8 +15,10 @@ public class TriangleHexMazeForm : IMazeGridForm
             _size = height;
     }
 
-    public List<IGridCoordinates> GenerateGridCoordinates()
+    public List<IGridCoordinates> GenerateGridCoordinates(int width, int height)
     {
+        Initialize(width, height);
+
         List<IGridCoordinates> gridCoordinates = new List<IGridCoordinates>();
 
         for (int q = 0; q < _size; q++)
