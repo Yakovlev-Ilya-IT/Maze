@@ -9,8 +9,13 @@ public class Test : MonoBehaviour
     Level _level;
     public void StartGame()
     {
-        if(_level == null)
-            _level = new Level(_maze, _character, _levelConfig);
+        MovementControlMediator movementMediator = new MovementControlMediator();
+        MovementHandler movementControlHandler = new MovementHandler(movementMediator, _maze, _character, MovementPathfinderType.UntilNextFork);
+
+        if (_level == null)
+        {
+            _level = new Level(_maze, _character, movementControlHandler, movementMediator, _levelConfig);
+        }
 
         _level.StartLevel();
     }

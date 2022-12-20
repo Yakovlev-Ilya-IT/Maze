@@ -4,7 +4,8 @@ using UnityEngine;
 
 public abstract class MovementControlDisplay : MonoBehaviour, IMazeMovementControl
 {
-    private Transform _target;
+    private Transform _bindingTarget;
+    private IRotatable _rotationTarget;
     private readonly Vector3 _offset = Vector3.up / 10f;
 
     private Dictionary<CellDirections, DirectionArrow> _directionArrows;
@@ -13,13 +14,24 @@ public abstract class MovementControlDisplay : MonoBehaviour, IMazeMovementContr
 
     private bool _isVisible;
 
-    public virtual void Initialize(Transform target)
+    public virtual void Initialize(Transform bindingTarget, IRotatable rotationTarget)
     {
         _directionArrows = GetDirectionArrows();
-        _target = target;
+        _bindingTarget = bindingTarget;
+        _rotationTarget = rotationTarget;
+        _isVisible = true;
     }
 
     protected abstract Dictionary<CellDirections, DirectionArrow> GetDirectionArrows();
+
+    private void Update()
+    {
+        if (_isVisible)
+        {
+            SetToTarget();
+            UpdateRotation();
+        }
+    }
 
     public void Hide()
     {
@@ -42,12 +54,6 @@ public abstract class MovementControlDisplay : MonoBehaviour, IMazeMovementContr
         _isVisible = false;
     }
 
-    private void Update()
-    {
-        if (_isVisible)
-            SetToTarget();
-    }
-
     public void Show(Dictionary<CellDirections, IGridCoordinates> directionToNeighboursCoordinates)
     {
         if (_isVisible)
@@ -57,6 +63,7 @@ public abstract class MovementControlDisplay : MonoBehaviour, IMazeMovementContr
         }
 
         SetToTarget();
+        UpdateRotation();
         gameObject.SetActive(true);
         _isVisible = true;
 
@@ -80,9 +87,10 @@ public abstract class MovementControlDisplay : MonoBehaviour, IMazeMovementContr
         DirectionSelected?.Invoke(direction);
     }
 
-    private void SetToTarget() => transform.position = _target.position + _offset;
+    private void SetToTarget() => transform.position = _bindingTarget.position + _offset;
+    private void UpdateRotation() => transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, _rotationTarget.Rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
 
-    public void Disable()
+    public void Remove()
     {
         Destroy(gameObject);
     }

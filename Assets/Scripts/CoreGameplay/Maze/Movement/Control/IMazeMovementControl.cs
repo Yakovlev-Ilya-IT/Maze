@@ -7,5 +7,5 @@ public interface IMazeMovementControl
 
     public void Show(Dictionary<CellDirections, IGridCoordinates> directionToNeighboursCoordinates);
     public void Hide();
-    public void Disable();
+    public void Remove();
 }

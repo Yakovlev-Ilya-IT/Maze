@@ -6,13 +6,13 @@ public class HexMazeMovementControlFactory : MazeMovementControlFactory
 {
     [SerializeField] private HexMovementControlDisplay _worldSpaceDisplay;
 
-    public override IMazeMovementControl Get(MovementControlType type, Transform bindingTarget)
+    public override IMazeMovementControl Get(MovementControlType type, Transform bindingTarget, IRotatable rotationTarget)
     {
         switch (type)
         {
             case MovementControlType.WorldSpaceDisplay:
                 MovementControlDisplay instance = Instantiate(_worldSpaceDisplay);
-                instance.Initialize(bindingTarget);
+                instance.Initialize(bindingTarget, rotationTarget);
                 return instance;
         }
 

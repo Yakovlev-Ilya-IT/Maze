@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class RectangleSquareMazeForm : IMazeGridForm
 {
@@ -8,10 +9,20 @@ public class RectangleSquareMazeForm : IMazeGridForm
     public float XOffset => _width / 2f - 0.5f;
     public float YOffset => _height / 2f - 0.5f;
 
+    public Quaternion Rotation => Quaternion.Euler(new Vector3(0, 60, 0));
+
     private void Initialize(int width, int height)
     {
-        _width = width;
-        _height = height;
+        if (width > height)
+        {
+            _width = width;
+            _height = height;
+        }
+        else
+        {
+            _width = height;
+            _height = width;
+        }
     }
 
     public List<IGridCoordinates> GenerateGridCoordinates(int width, int height)

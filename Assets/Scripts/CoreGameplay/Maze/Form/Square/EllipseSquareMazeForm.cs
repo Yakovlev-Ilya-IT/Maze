@@ -9,10 +9,20 @@ public class EllipseSquareMazeForm : IMazeGridForm
     public float XOffset => 0;
     public float YOffset => 0;
 
+    public Quaternion Rotation => Quaternion.Euler(new Vector3(0, 45, 0));
+
     private void Initialize(int a, int b)
     {
-        _a = a / 2;
-        _b = b / 2;
+        if (a > b)
+        {
+            _a = a / 2;
+            _b = b / 2;
+        }
+        else
+        {
+            _a = b / 2;
+            _b = a / 2;
+        }
     }
 
     public List<IGridCoordinates> GenerateGridCoordinates(int a, int b)

@@ -9,6 +9,8 @@ public class EllipseHexMazeForm : IMazeGridForm
     public float XOffset => 0.5f;
     public float YOffset => 0;
 
+    public Quaternion Rotation => Quaternion.Euler(new Vector3(0, -12, 0));
+
     private void Initialize(int a, int b)
     {
         if(a > b)

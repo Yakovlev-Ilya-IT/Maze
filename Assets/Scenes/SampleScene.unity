@@ -370,14 +370,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: 0.35355338, y: -0.35355338, z: 0.1464466, w: 0.8535535}
-  m_LocalPosition: {x: 8.9, y: 13, z: -8.14}
+  m_LocalRotation: {x: 0.39988604, y: 0.44350544, z: -0.23087431, w: 0.76817393}
+  m_LocalPosition: {x: -7.93, y: 13.07, z: -4.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 45, y: -45, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 60, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -788,17 +788,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelConfig:
-    _startMazeWidth: 6
-    _startMazeHeight: 6
-    _mazeFormType: 0
-    _mazeGenerationAlgoritm: 0
-    _randomMazeFormType: 0
-    _randomMazeGenerationAlgoritm: 0
+    _mazeConfig:
+      _cellFactory: {fileID: 11400000, guid: 8ec37b8d74f552a4db508a7b10456b7e, type: 2}
+      _cellContentFactory: {fileID: 11400000, guid: c1b4118fcdd295348896fce9edc278b6,
+        type: 2}
+      _startWidth: 10
+      _startHeight: 6
+      _cellType: 0
+      _formType: 2
+      _generationAlgoritm: 0
+      _randomCellType: 1
+      _randomFormType: 1
+      _randomGenerationAlgoritm: 0
+    _gameMode: 0
   _maze: {fileID: 1863275278}
   _character: {fileID: 611584972}
-  _cellFactory: {fileID: 11400000, guid: 8ec37b8d74f552a4db508a7b10456b7e, type: 2}
-  _cellContentFactory: {fileID: 11400000, guid: c1b4118fcdd295348896fce9edc278b6,
-    type: 2}
 --- !u!4 &911044227
 Transform:
   m_ObjectHideFlags: 0
@@ -970,7 +974,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.33900002, y: 0}
   m_AnchorMax: {x: 0.47900003, y: 0.046474036}
-  m_AnchoredPosition: {x: 0.5, y: -0.6549072}
+  m_AnchoredPosition: {x: 0.5, y: -0.6550293}
   m_SizeDelta: {x: 1.1412048, y: -1.3097992}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2039518152

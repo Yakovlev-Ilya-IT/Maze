@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Maze: MonoBehaviour, IMazeGrid
+public class Maze: MonoBehaviour, IMazeGrid, IRotatable
 {
     private Dictionary<IGridCoordinates, MazeCell> _grid = new Dictionary<IGridCoordinates, MazeCell>();
 
-    private MazeSetup _config;
+    private MazeSetup _setup;
 
     private MazeCell _startCell;
     private MazeCell _finishCell;
@@ -19,11 +19,14 @@ public class Maze: MonoBehaviour, IMazeGrid
     public MazeCell StartCell => _startCell;
     public MazeCell FinishCell => _finishCell;
 
-    private int Width => _config.Width;
-    private int Height => _config.Height;
-    public MazeCellType CellType => _config.CellType;
-    public IMazeGridForm Form => _config.Form;
-    public IMazeGridGenerator GridGenerator => _config.GridGenerator;
+    private Quaternion InitializeRotation => new Quaternion(0,0,0,0);
+    private int Width => _setup.Width;
+    private int Height => _setup.Height;
+    public MazeCellType CellType => _setup.CellType;
+    public IMazeGridForm Form => _setup.Form;
+    public IMazeGridGenerator GridGenerator => _setup.GridGenerator;
+
+    public Quaternion Rotation => transform.rotation;
 
     public void Initialize(MazeCellFactory cellFactory, MazeCellContentFactory cellContentFactory)
     {
@@ -31,9 +34,11 @@ public class Maze: MonoBehaviour, IMazeGrid
         _cellContentFactory = cellContentFactory;
     }
 
-    public void Build(MazeSetup config)
+    public void Build(MazeSetup setup)
     {
-        _config = config;
+        transform.rotation = InitializeRotation;
+
+        _setup = setup;
 
         MazeDataGrid dataGrid = GridGenerator.Generate(Form, Width, Height);
 
@@ -48,6 +53,8 @@ public class Maze: MonoBehaviour, IMazeGrid
             MazeCell cell = BuildCell(cellData);
             _grid.Add(data.Key, cell);
         }
+
+        transform.rotation = Form.Rotation;
     }
 
     private MazeCell BuildCell(MazeCellData data)

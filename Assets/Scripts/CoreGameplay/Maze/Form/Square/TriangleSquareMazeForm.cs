@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class TriangleSquareMazeForm : IMazeGridForm
 {
@@ -6,6 +7,8 @@ public class TriangleSquareMazeForm : IMazeGridForm
 
     public float XOffset => (_size + _size / 2f) / 3f - 0.5f;
     public float YOffset => _size / 3f;
+
+    public Quaternion Rotation => Quaternion.Euler(new Vector3(0, 100, 0));
 
     private void Initialize(int width, int height)
     {

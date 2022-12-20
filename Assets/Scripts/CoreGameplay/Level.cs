@@ -1,54 +1,53 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Level 
 {
     private LevelConfig _config;
+    private IGameMode _gameMode;
 
     private Maze _maze;
-
     private Character _character;
 
-    private MazeSetupBuilderFactory _mazeConfigBuilderFactory;
-    private MazeSetupBuilder _mazeConfigBuilder;
-    private MazeCellFactory _cellFactory;
-    private MazeCellContentFactory _cellContentFactory;
+    private MovementHandler _movementHandler;
+    private MovementControlMediator _movementControlMediator;
 
-    private MazeMovementHandlerFactory _movementHandlerFactory;
-    private IMazeMovementHandler _movementHandler;
-
-    private MazeMovementControlFactory _ñontrolFactory;
-    private IMazeMovementControl _control;
-    private const string ControlFactoryPath = "Controls";
-    private readonly Dictionary<MazeCellType, string> _cellTypeToControlFactoryName = new Dictionary<MazeCellType, string>()
-    {
-        { MazeCellType.Square, "SquareMovementControlFactory"},
-        { MazeCellType.Hex, "HexMovementControlFactory" }
-    };
+    private MazeSetupBuilderFactory _mazeSetupBuilderFactory;
+    private MazeSetupBuilder _mazeSetupBuilder;
 
     private MazeConfig MazeConfig => _config.MazeConfig;
 
-    public Level(Maze maze, Character character, LevelConfig config)
+    public Level(Maze maze, Character character, MovementHandler movementHandler, MovementControlMediator movementControlMediator, LevelConfig config)
     {
         _config = config;
+
         _maze = maze;
         _character = character;
 
+        _movementHandler = movementHandler;
+        _movementControlMediator = movementControlMediator;
+
+
+        if(config.GameMode == GameModes.Standart)
+        {
+            _gameMode = new StandartGameMode(_maze, _movementHandler);
+            _gameMode.LevelCompleted += OnLevelComplete;
+        }
+
         _maze.Initialize(MazeConfig.CellFactory, MazeConfig.CellContentFactory);
 
-        _mazeConfigBuilderFactory = new MazeSetupBuilderFactory();
-        
-        _movementHandlerFactory = new MazeMovementHandlerFactory();
+        _mazeSetupBuilderFactory = new MazeSetupBuilderFactory();
     }
 
     public void StartLevel()
     {
-        MazeCellType cellType = (MazeCellType)UnityEngine.Random.Range(0, Enum.GetNames(typeof(MazeCellType)).Length);
+        MazeCellType cellType = MazeConfig.CellType;
 
         PrepareMaze(cellType);
         PrepareCharacter();
         PrepareControl(cellType);
+
+        _gameMode.StartLevel();
     }
 
     private void PrepareCharacter()
@@ -59,31 +58,21 @@ public class Level
 
     private void PrepareControl(MazeCellType cellType)
     {
-        _control?.Disable();
+        _movementHandler.Disable();
 
-        if (_movementHandler != null)
-        {
-            _movementHandler.TargetReached -= OnTargetReached;
-            _movementHandler?.Disable();
-        }
-
-        _ñontrolFactory = Resources.Load<MazeMovementControlFactory>($"{ControlFactoryPath}/{_cellTypeToControlFactoryName[cellType]}");
-
-        _control = _ñontrolFactory.Get(MovementControlType.WorldSpaceDisplay, _character.gameObject.transform);
-        _movementHandler = _movementHandlerFactory.Get(MovementHandlerType.Automatic, _character, _control, _maze, _maze.StartCell);
-
-        _movementHandler.TargetReached += OnTargetReached;
+        _movementControlMediator.Initialize(_movementHandler, MovementControlType.WorldSpaceDisplay, cellType, _character.transform, _maze);
+        _movementHandler.Initialize(_maze.StartCell);
     }
 
     private void PrepareMaze(MazeCellType cellType)
     {
         _maze.Clear();
 
-        _mazeConfigBuilder = _mazeConfigBuilderFactory.Get(cellType);
-        MazeSetup setup = _mazeConfigBuilder
-                               .SetSize(MazeConfig.StartMazeWidth, MazeConfig.StartMazeHeight)
-                               .SetGenerationAlgoritm(MazeConfig.MazeGenerationAlgoritm)
-                               .SetMazeForm(MazeConfig.MazeFormType)
+        _mazeSetupBuilder = _mazeSetupBuilderFactory.Get(cellType);
+        MazeSetup setup = _mazeSetupBuilder
+                               .SetSize(MazeConfig.StartWidth, MazeConfig.StartHeight)
+                               .SetGenerationAlgoritm(MazeConfig.GenerationAlgoritm)
+                               .SetMazeForm(MazeConfig.FormType)
                                .GetResult();
 
         _maze.Build(setup);
@@ -91,12 +80,14 @@ public class Level
         _maze.SetFinishDistantFromStart();
     }
 
-    private void OnTargetReached(MazeCell cell)
+    private void OnLevelComplete()
     {
-        if (cell == _maze.FinishCell)
-        {
-            Debug.Log("YOOOOOUUUU WIIIINNNN!!!");
-            StartLevel();
-        }
+        Debug.Log("YOOOOOUUUU WIIIINNNN!!!");
+        StartLevel();
+    }
+
+    ~Level()
+    {
+        _gameMode.LevelCompleted -= OnLevelComplete;
     }
 }

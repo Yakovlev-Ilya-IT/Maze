@@ -7,40 +7,53 @@ public class MazeConfig
     [SerializeField] private MazeCellFactory _cellFactory;
     [SerializeField] private MazeCellContentFactory _cellContentFactory;
 
-    [SerializeField] private int _startMazeWidth;
-    [SerializeField] private int _startMazeHeight;
+    [SerializeField] private int _startWidth;
+    [SerializeField] private int _startHeight;
 
-    [SerializeField] private MazeFormType _mazeFormType;
-    [SerializeField] private MazeGenerationAlgorithm _mazeGenerationAlgoritm;
+    [SerializeField] private MazeCellType _cellType;
+    [SerializeField] private MazeFormType _formType;
+    [SerializeField] private MazeGenerationAlgorithm _generationAlgoritm;
 
-    [SerializeField] private bool _randomMazeFormType;
-    [SerializeField] private bool _randomMazeGenerationAlgoritm;
+    [SerializeField] private bool _randomCellType;
+    [SerializeField] private bool _randomFormType;
+    [SerializeField] private bool _randomGenerationAlgoritm;
 
     public MazeCellFactory CellFactory => _cellFactory;
     public MazeCellContentFactory CellContentFactory => _cellContentFactory;
 
-    public int StartMazeWidth => _startMazeWidth;
-    public int StartMazeHeight => _startMazeHeight;
+    public int StartWidth => _startWidth;
+    public int StartHeight => _startHeight;
 
-    public MazeFormType MazeFormType
+    public MazeCellType CellType
     {
         get
         {
-            if (_randomMazeFormType)
-                return (MazeFormType)UnityEngine.Random.Range(0, Enum.GetNames(typeof(MazeFormType)).Length);
+            if (_randomCellType)
+                return (MazeCellType)UnityEngine.Random.Range(0, Enum.GetNames(typeof(MazeCellType)).Length);
 
-            return _mazeFormType;
+            return _cellType;
         }
     }
 
-    public MazeGenerationAlgorithm MazeGenerationAlgoritm
+    public MazeFormType FormType
     {
         get
         {
-            if (_randomMazeGenerationAlgoritm)
+            if (_randomFormType)
+                return (MazeFormType)UnityEngine.Random.Range(0, Enum.GetNames(typeof(MazeFormType)).Length);
+
+            return _formType;
+        }
+    }
+
+    public MazeGenerationAlgorithm GenerationAlgoritm
+    {
+        get
+        {
+            if (_randomGenerationAlgoritm)
                 return (MazeGenerationAlgorithm)UnityEngine.Random.Range(0, Enum.GetNames(typeof(MazeGenerationAlgorithm)).Length);
 
-            return _mazeGenerationAlgoritm;
+            return _generationAlgoritm;
         }
     }
 }

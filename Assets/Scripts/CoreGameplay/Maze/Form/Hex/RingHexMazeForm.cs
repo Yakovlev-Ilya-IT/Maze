@@ -10,6 +10,8 @@ public class RingHexMazeForm : IMazeGridForm
 
     public float YOffset => 0;
 
+    public Quaternion Rotation => Quaternion.Euler(new Vector3(0, 0, 0));
+
     private void Initialize(int width, int height)
     {
         if (width > height)

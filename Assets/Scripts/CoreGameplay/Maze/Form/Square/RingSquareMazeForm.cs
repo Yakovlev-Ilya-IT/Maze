@@ -12,6 +12,8 @@ public class RingSquareMazeForm : IMazeGridForm
 
     public float YOffset => 0;
 
+    public Quaternion Rotation => Quaternion.Euler(new Vector3(0, 15, 0));
+
     private void Initialize(int width, int height)
     {
         if (width > height)

@@ -2,6 +2,6 @@ using System;
 
 public interface IGameMode
 {
-    event Action LevelComplete;
+    event Action LevelCompleted;
     void StartLevel();
 }
