@@ -22,7 +22,6 @@
    <img src="https://i.ibb.co/MSyx1SJ/image.png" alt="Unity Version" width="600">
    <img src="https://i.ibb.co/3FpdFYh/image.png" alt="Game Version"  width="600">
    <img src="https://i.ibb.co/349nChB/image.png" alt="Game Version"  width="600">
-
 </p>
 
 ## Разработчик
